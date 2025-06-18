@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,6 +29,7 @@ import {
   Trophy,
   Search,
   Filter,
+  Settings,
 } from "lucide-react";
 
 interface Player {
@@ -35,11 +37,12 @@ interface Player {
   name: string;
   rating: number;
   department: string;
-  year: number;
+  rollNumber: string;
   gamesPlayed: number;
   wins: number;
   losses: number;
   draws: number;
+  lastActive: string;
 }
 
 const mockPlayers: Player[] = [
@@ -48,111 +51,123 @@ const mockPlayers: Player[] = [
     name: "Alex Chen",
     rating: 2156,
     department: "Computer Science",
-    year: 3,
+    rollNumber: "CS21B1001",
     gamesPlayed: 45,
     wins: 32,
     losses: 8,
     draws: 5,
+    lastActive: "2024-01-15",
   },
   {
     id: "2",
     name: "Sarah Johnson",
     rating: 2089,
     department: "Mathematics",
-    year: 4,
+    rollNumber: "MA20B1045",
     gamesPlayed: 38,
     wins: 28,
     losses: 7,
     draws: 3,
+    lastActive: "2024-01-14",
   },
   {
     id: "3",
     name: "Michael Rodriguez",
     rating: 1987,
     department: "Physics",
-    year: 2,
+    rollNumber: "PH22B1023",
     gamesPlayed: 52,
     wins: 35,
     losses: 12,
     draws: 5,
+    lastActive: "2024-01-16",
   },
   {
     id: "4",
     name: "Emma Thompson",
     rating: 1923,
     department: "Engineering",
-    year: 1,
+    rollNumber: "EN23B1067",
     gamesPlayed: 29,
     wins: 19,
     losses: 8,
     draws: 2,
+    lastActive: "2024-01-13",
   },
   {
     id: "5",
     name: "David Kim",
     rating: 1876,
     department: "Computer Science",
-    year: 3,
+    rollNumber: "CS21B1089",
     gamesPlayed: 41,
     wins: 24,
     losses: 13,
     draws: 4,
+    lastActive: "2024-01-12",
   },
   {
     id: "6",
     name: "Lisa Wang",
     rating: 1834,
     department: "Mathematics",
-    year: 2,
+    rollNumber: "MA22B1034",
     gamesPlayed: 33,
     wins: 21,
     losses: 9,
     draws: 3,
+    lastActive: "2024-01-15",
   },
   {
     id: "7",
     name: "James Wilson",
     rating: 1789,
     department: "Physics",
-    year: 4,
+    rollNumber: "PH20B1056",
     gamesPlayed: 47,
     wins: 26,
     losses: 16,
     draws: 5,
+    lastActive: "2024-01-11",
   },
   {
     id: "8",
     name: "Maria Garcia",
     rating: 1756,
     department: "Engineering",
-    year: 1,
+    rollNumber: "EN23B1012",
     gamesPlayed: 25,
     wins: 15,
     losses: 8,
     draws: 2,
+    lastActive: "2024-01-14",
   },
 ];
 
-export default function HomeLeaderboard() {
+export default function ChessLeaderboard() {
+  const router = useRouter();
+  const [players] = useState<Player[]>(mockPlayers);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("rating");
   const [departmentFilter, setDepartmentFilter] = useState("all");
-  const [yearFilter, setYearFilter] = useState("all");
+  const [rollNumberFilter, setRollNumberFilter] = useState("all");
   const [minRating, setMinRating] = useState("");
   const [maxRating, setMaxRating] = useState("");
 
-  const departments = Array.from(new Set(mockPlayers.map((p) => p.department)));
-  const years = Array.from(new Set(mockPlayers.map((p) => p.year))).sort();
+  const departments = Array.from(new Set(players.map((p) => p.department)));
+  const rollNumbers = Array.from(
+    new Set(players.map((p) => p.rollNumber)),
+  ).sort();
 
   const filteredAndSortedPlayers = useMemo(() => {
-    const filtered = mockPlayers.filter((player) => {
+    const filtered = players.filter((player) => {
       const matchesSearch = player.name
         .toLowerCase()
         .includes(searchTerm.toLowerCase());
       const matchesDepartment =
         departmentFilter === "all" || player.department === departmentFilter;
-      const matchesYear =
-        yearFilter === "all" || player.year.toString() === yearFilter;
+      const matchesRollNumber =
+        rollNumberFilter === "all" || player.rollNumber === rollNumberFilter;
       const matchesMinRating =
         !minRating || player.rating >= Number.parseInt(minRating);
       const matchesMaxRating =
@@ -161,7 +176,7 @@ export default function HomeLeaderboard() {
       return (
         matchesSearch &&
         matchesDepartment &&
-        matchesYear &&
+        matchesRollNumber &&
         matchesMinRating &&
         matchesMaxRating
       );
@@ -183,7 +198,15 @@ export default function HomeLeaderboard() {
           return b.rating - a.rating;
       }
     });
-  }, [searchTerm, sortBy, departmentFilter, yearFilter, minRating, maxRating]);
+  }, [
+    players,
+    searchTerm,
+    sortBy,
+    departmentFilter,
+    rollNumberFilter,
+    minRating,
+    maxRating,
+  ]);
 
   const getRankIcon = (index: number) => {
     if (index === 0) return <Crown className="w-5 h-5 text-yellow-500" />;
@@ -208,17 +231,43 @@ export default function HomeLeaderboard() {
     return ((player.wins / player.gamesPlayed) * 100).toFixed(1);
   };
 
+  const handlePlayerClick = (playerId: string) => {
+    router.push(`/player/${playerId}`);
+  };
+
+  const handleAdminClick = () => {
+    router.push("/admin");
+  };
+
+  const handleTournamentsClick = () => {
+    router.push("/tournaments");
+  };
+
   return (
-    <div className="min-h-screen bg-background max-w-5xl">
+    <div className="min-h-screen bg-background max-w-4xl">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl text-center font-bold mb-2">
-            NIT Hamirpur Chess Leaderboard
-          </h1>
-          <p className="text-muted-foreground text-center">
-            Ranked best chess players from our institute
-          </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl font-bold mb-2">
+                University Chess Leaderboard
+              </h1>
+              <p className="text-muted-foreground">
+                Ranked chess players from our university community
+              </p>
+            </div>
+            {/* <div className="flex items-center space-x-2"> */}
+            {/*   <Button onClick={handleTournamentsClick} variant="outline"> */}
+            {/*     <Trophy className="w-4 h-4 mr-2" /> */}
+            {/*     Tournaments */}
+            {/*   </Button> */}
+            {/*   <Button onClick={handleAdminClick} variant="outline"> */}
+            {/*     <Settings className="w-4 h-4 mr-2" /> */}
+            {/*     Admin Dashboard */}
+            {/*   </Button> */}
+            {/* </div> */}
+          </div>
         </div>
 
         {/* Filters and Search */}
@@ -266,16 +315,22 @@ export default function HomeLeaderboard() {
               </div>
 
               <div className="space-y-2">
-                <Label>Year of Study</Label>
-                <Select value={yearFilter} onValueChange={setYearFilter}>
+                <Label>Roll Number</Label>
+                <Select
+                  value={rollNumberFilter}
+                  onValueChange={setRollNumberFilter}
+                >
                   <SelectTrigger>
-                    <SelectValue placeholder="All Years" />
+                    <SelectValue placeholder="All Roll Numbers" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Years</SelectItem>
-                    {years.map((year) => (
-                      <SelectItem key={year} value={year.toString()}>
-                        Year {year}
+                    <SelectItem value="all">All Roll Numbers</SelectItem>
+                    {rollNumbers.map((rollNumber) => (
+                      <SelectItem
+                        key={rollNumber}
+                        value={rollNumber.toString()}
+                      >
+                        {rollNumber}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -348,7 +403,7 @@ export default function HomeLeaderboard() {
         {/* Results Summary */}
         <div className="mb-6">
           <p className="text-sm text-muted-foreground">
-            Showing {filteredAndSortedPlayers.length} of {mockPlayers.length}{" "}
+            Showing {filteredAndSortedPlayers.length} of {players.length}{" "}
             players
           </p>
         </div>
@@ -357,18 +412,23 @@ export default function HomeLeaderboard() {
         <div className="space-y-4">
           {filteredAndSortedPlayers.map((player, index) => (
             <Card key={player.id} className="hover:shadow-md transition-shadow">
-              <CardContent className="p-1">
-                <div className="flex flex-wrap space-y-6 items-center justify-between">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
                     <div className="flex items-center justify-center w-12 h-12 rounded-full bg-muted">
                       {getRankIcon(index)}
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold">{player.name}</h3>
+                      <button
+                        onClick={() => handlePlayerClick(player.id)}
+                        className="text-lg font-semibold hover:text-blue-600 transition-colors text-left"
+                      >
+                        {player.name}
+                      </button>
                       <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                         <span>{player.department}</span>
                         <Separator orientation="vertical" className="h-4" />
-                        <span>Year {player.year}</span>
+                        <span>Roll: {player.rollNumber}</span>
                       </div>
                     </div>
                   </div>
@@ -412,6 +472,15 @@ export default function HomeLeaderboard() {
                         </span>
                       </p>
                       <p className="text-xs text-muted-foreground">Record</p>
+                    </div>
+
+                    <div className="text-center">
+                      <p className="text-sm">
+                        {new Date(player.lastActive).toLocaleDateString()}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Last Active
+                      </p>
                     </div>
                   </div>
                 </div>
