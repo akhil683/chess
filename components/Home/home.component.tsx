@@ -235,13 +235,13 @@ export default function ChessLeaderboard() {
     router.push(`/player/${playerId}`);
   };
 
-  const handleAdminClick = () => {
-    router.push("/admin");
-  };
-
-  const handleTournamentsClick = () => {
-    router.push("/tournaments");
-  };
+  // const handleAdminClick = () => {
+  //   router.push("/admin");
+  // };
+  //
+  // const handleTournamentsClick = () => {
+  //   router.push("/tournaments");
+  // };
 
   return (
     <div className="min-h-screen bg-background max-w-4xl">
@@ -250,11 +250,11 @@ export default function ChessLeaderboard() {
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-4xl font-bold mb-2">
-                University Chess Leaderboard
+              <h1 className="text-4xl font-bold mb-2 text-center">
+                NITH Chess Leaderboard
               </h1>
-              <p className="text-muted-foreground">
-                Ranked chess players from our university community
+              <p className="text-muted-foreground text-center">
+                Ranked best chess players from NITH.
               </p>
             </div>
             {/* <div className="flex items-center space-x-2"> */}
