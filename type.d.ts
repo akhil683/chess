@@ -9,7 +9,6 @@ export interface IGame {
   ratingChange: number;
   moves: number;
   gameType: "rated" | "casual";
-  opening: string;
 }
 
 export interface IPlayerStats {
@@ -35,11 +34,10 @@ export interface IPlayer {
   rating: number;
   department: string;
   rollNumber: string;
-  joinDate: string;
+  joinDate?: string;
   lastActive: string;
   avatar?: string;
   bio?: string;
   stats: PlayerStats;
-  recentGames: Game[];
-  ratingHistory: { date: string; rating: number }[];
+  recentGames?: Game[];
 }

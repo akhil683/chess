@@ -4,7 +4,7 @@ import { TabsContent } from "../ui/tabs";
 import { Separator } from "../ui/separator";
 import { IGame, IPlayer } from "@/type";
 
-export default function GameHistory({ player }: { player: Player }) {
+export default function GameHistory({ player }: { player: IPlayer }) {
   return (
     <TabsContent value="games">
       <Card>
@@ -13,7 +13,7 @@ export default function GameHistory({ player }: { player: Player }) {
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {player.recentGames.map((game: IGame) => (
+            {player?.recentGames?.map((game: IGame) => (
               <div
                 key={game.id}
                 className="p-4 rounded-lg border hover:bg-muted/50 transition-colors"
@@ -37,8 +37,6 @@ export default function GameHistory({ player }: { player: Player }) {
                         <span>Rating: {game.opponentRating}</span>
                         <Separator orientation="vertical" className="h-3" />
                         <span className="capitalize">{game.playerColor}</span>
-                        <Separator orientation="vertical" className="h-3" />
-                        <span>{game.opening}</span>
                       </div>
                     </div>
                   </div>

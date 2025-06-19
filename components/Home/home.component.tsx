@@ -29,33 +29,22 @@ import {
   Trophy,
   Search,
   Filter,
-  Settings,
 } from "lucide-react";
+import { IPlayer } from "@/type";
 
-interface Player {
-  id: string;
-  name: string;
-  rating: number;
-  department: string;
-  rollNumber: string;
-  gamesPlayed: number;
-  wins: number;
-  losses: number;
-  draws: number;
-  lastActive: string;
-}
-
-const mockPlayers: Player[] = [
+const mockPlayers: IPlayer[] = [
   {
     id: "1",
     name: "Alex Chen",
     rating: 2156,
     department: "Computer Science",
     rollNumber: "CS21B1001",
-    gamesPlayed: 45,
-    wins: 32,
-    losses: 8,
-    draws: 5,
+    stats: {
+      totalGames: 45,
+      wins: 32,
+      losses: 8,
+      draws: 5,
+    },
     lastActive: "2024-01-15",
   },
   {
@@ -64,10 +53,12 @@ const mockPlayers: Player[] = [
     rating: 2089,
     department: "Mathematics",
     rollNumber: "MA20B1045",
-    gamesPlayed: 38,
-    wins: 28,
-    losses: 7,
-    draws: 3,
+    stats: {
+      totalGames: 38,
+      wins: 28,
+      losses: 7,
+      draws: 3,
+    },
     lastActive: "2024-01-14",
   },
   {
@@ -76,10 +67,12 @@ const mockPlayers: Player[] = [
     rating: 1987,
     department: "Physics",
     rollNumber: "PH22B1023",
-    gamesPlayed: 52,
-    wins: 35,
-    losses: 12,
-    draws: 5,
+    stats: {
+      totalGames: 52,
+      wins: 35,
+      losses: 12,
+      draws: 5,
+    },
     lastActive: "2024-01-16",
   },
   {
@@ -88,10 +81,12 @@ const mockPlayers: Player[] = [
     rating: 1923,
     department: "Engineering",
     rollNumber: "EN23B1067",
-    gamesPlayed: 29,
-    wins: 19,
-    losses: 8,
-    draws: 2,
+    stats: {
+      totalGames: 29,
+      wins: 19,
+      losses: 8,
+      draws: 2,
+    },
     lastActive: "2024-01-13",
   },
   {
@@ -100,10 +95,12 @@ const mockPlayers: Player[] = [
     rating: 1876,
     department: "Computer Science",
     rollNumber: "CS21B1089",
-    gamesPlayed: 41,
-    wins: 24,
-    losses: 13,
-    draws: 4,
+    stats: {
+      totalGames: 41,
+      wins: 24,
+      losses: 13,
+      draws: 4,
+    },
     lastActive: "2024-01-12",
   },
   {
@@ -112,10 +109,12 @@ const mockPlayers: Player[] = [
     rating: 1834,
     department: "Mathematics",
     rollNumber: "MA22B1034",
-    gamesPlayed: 33,
-    wins: 21,
-    losses: 9,
-    draws: 3,
+    stats: {
+      totalGames: 33,
+      wins: 21,
+      losses: 9,
+      draws: 3,
+    },
     lastActive: "2024-01-15",
   },
   {
@@ -124,10 +123,12 @@ const mockPlayers: Player[] = [
     rating: 1789,
     department: "Physics",
     rollNumber: "PH20B1056",
-    gamesPlayed: 47,
-    wins: 26,
-    losses: 16,
-    draws: 5,
+    stats: {
+      totalGames: 47,
+      wins: 26,
+      losses: 16,
+      draws: 5,
+    },
     lastActive: "2024-01-11",
   },
   {
@@ -136,17 +137,19 @@ const mockPlayers: Player[] = [
     rating: 1756,
     department: "Engineering",
     rollNumber: "EN23B1012",
-    gamesPlayed: 25,
-    wins: 15,
-    losses: 8,
-    draws: 2,
+    stats: {
+      totalGames: 25,
+      wins: 15,
+      losses: 8,
+      draws: 2,
+    },
     lastActive: "2024-01-14",
   },
 ];
 
 export default function ChessLeaderboard() {
   const router = useRouter();
-  const [players] = useState<Player[]>(mockPlayers);
+  const [players] = useState<IPlayer[]>(mockPlayers);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("rating");
   const [departmentFilter, setDepartmentFilter] = useState("all");
@@ -189,10 +192,10 @@ export default function ChessLeaderboard() {
         case "name":
           return a.name.localeCompare(b.name);
         case "gamesPlayed":
-          return b.gamesPlayed - a.gamesPlayed;
+          return b.stats.totalGames - a.stats.totalGames;
         case "winRate":
-          const aWinRate = a.wins / a.gamesPlayed;
-          const bWinRate = b.wins / b.gamesPlayed;
+          const aWinRate = a.stats.wins / a.stats.totalGames;
+          const bWinRate = b.stats.wins / b.stats.totalGames;
           return bWinRate - aWinRate;
         default:
           return b.rating - a.rating;
@@ -227,8 +230,8 @@ export default function ChessLeaderboard() {
     return "bg-gray-100 text-gray-800 border-gray-200";
   };
 
-  const getWinRate = (player: Player) => {
-    return ((player.wins / player.gamesPlayed) * 100).toFixed(1);
+  const getWinRate = (player: IPlayer) => {
+    return ((player.stats.wins / player.stats.totalGames) * 100).toFixed(1);
   };
 
   const handlePlayerClick = (playerId: string) => {
@@ -445,7 +448,7 @@ export default function ChessLeaderboard() {
 
                     <div className="text-center">
                       <p className="text-lg font-semibold">
-                        {player.gamesPlayed}
+                        {player.stats.totalGames}
                       </p>
                       <p className="text-xs text-muted-foreground">Games</p>
                     </div>
@@ -460,15 +463,15 @@ export default function ChessLeaderboard() {
                     <div className="text-center">
                       <p className="text-sm">
                         <span className="text-green-600 font-medium">
-                          {player.wins}W
+                          {player.stats.wins}W
                         </span>
                         {" / "}
                         <span className="text-red-600 font-medium">
-                          {player.losses}L
+                          {player.stats.losses}L
                         </span>
                         {" / "}
                         <span className="text-gray-600 font-medium">
-                          {player.draws}D
+                          {player.stats.draws}D
                         </span>
                       </p>
                       <p className="text-xs text-muted-foreground">Record</p>

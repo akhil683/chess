@@ -29,6 +29,8 @@ import {
   BarChart3,
   ArrowLeft,
 } from "lucide-react";
+import PlayerSelector from "./player-selector.component";
+import { IPlayer } from "@/type";
 
 interface MatchResult {
   id: string;
@@ -41,7 +43,6 @@ interface MatchResult {
   result: "player1" | "player2" | "draw";
   timeControl: string;
   date: string;
-  opening: string;
   moves: number;
   gameType: "rated" | "casual";
   notes?: string;
@@ -49,74 +50,100 @@ interface MatchResult {
   addedAt: string;
 }
 
-interface Player {
-  id: string;
-  name: string;
-  rating: number;
-  department: string;
-  rollNumber: string;
-  gamesPlayed: number;
-  wins: number;
-  losses: number;
-  draws: number;
-  lastActive: string;
-}
-
-// Mock data - in real app this would come from a database
-const initialPlayers: Player[] = [
+const initialPlayers: IPlayer[] = [
   {
     id: "1",
     name: "Alex Chen",
     rating: 2156,
     department: "Computer Science",
     rollNumber: "CS21B1001",
-    gamesPlayed: 45,
-    wins: 32,
-    losses: 8,
-    draws: 5,
+    joinDate: "2023-09-15",
     lastActive: "2024-01-15",
-  },
-  {
-    id: "2",
-    name: "Sarah Johnson",
-    rating: 2089,
-    department: "Mathematics",
-    rollNumber: "MA20B1045",
-    gamesPlayed: 38,
-    wins: 28,
-    losses: 7,
-    draws: 3,
-    lastActive: "2024-01-14",
-  },
-  {
-    id: "3",
-    name: "Michael Rodriguez",
-    rating: 1987,
-    department: "Physics",
-    rollNumber: "PH22B1023",
-    gamesPlayed: 52,
-    wins: 35,
-    losses: 12,
-    draws: 5,
-    lastActive: "2024-01-16",
-  },
-  {
-    id: "4",
-    name: "Emma Thompson",
-    rating: 1923,
-    department: "Engineering",
-    rollNumber: "EN23B1067",
-    gamesPlayed: 29,
-    wins: 19,
-    losses: 8,
-    draws: 2,
-    lastActive: "2024-01-13",
+    bio: "Passionate chess player and computer science student. Love tactical puzzles and endgame studies.",
+    stats: {
+      totalGames: 45,
+      wins: 32,
+      losses: 8,
+      draws: 5,
+      winRate: 71.1,
+      currentStreak: 5,
+      longestStreak: 8,
+      averageOpponentRating: 1987,
+      ratingPeak: 2189,
+      ratingLow: 1834,
+      favoriteOpening: "Sicilian Defense",
+      averageGameLength: 42,
+      whiteWinRate: 75.0,
+      blackWinRate: 67.4,
+    },
+    recentGames: [
+      {
+        id: "g1",
+        opponent: "Sarah Johnson",
+        opponentRating: 2089,
+        result: "win",
+        playerColor: "white",
+        timeControl: "10+5",
+        date: "2024-01-15",
+        ratingChange: +12,
+        moves: 38,
+        gameType: "rated",
+      },
+      {
+        id: "g2",
+        opponent: "Michael Rodriguez",
+        opponentRating: 1987,
+        result: "win",
+        playerColor: "black",
+        timeControl: "15+10",
+        date: "2024-01-14",
+        ratingChange: +8,
+        moves: 45,
+        gameType: "rated",
+      },
+      {
+        id: "g3",
+        opponent: "Emma Thompson",
+        opponentRating: 1923,
+        result: "draw",
+        playerColor: "white",
+        timeControl: "10+5",
+        date: "2024-01-13",
+        ratingChange: -2,
+        moves: 67,
+        gameType: "rated",
+      },
+      {
+        id: "g4",
+        opponent: "David Kim",
+        opponentRating: 1876,
+        result: "win",
+        playerColor: "black",
+        timeControl: "5+3",
+        date: "2024-01-12",
+        ratingChange: +6,
+        moves: 29,
+        gameType: "rated",
+      },
+      {
+        id: "g5",
+        opponent: "Lisa Wang",
+        opponentRating: 1834,
+        result: "win",
+        playerColor: "white",
+        timeControl: "15+10",
+        date: "2024-01-11",
+        ratingChange: +5,
+        moves: 52,
+        gameType: "rated",
+      },
+    ],
   },
 ];
 
 interface AdminDashboardProps {
   onBack?: () => void;
-  onPlayersUpdate?: (players: Player[]) => void;
+  onPlayersUpdate?: (players: IPlayer[]) => void;
 }
 
 export default function AdminDashboard({
@@ -124,7 +151,7 @@ export default function AdminDashboard({
   onPlayersUpdate,
 }: AdminDashboardProps) {
   const router = useRouter();
-  const [players, setPlayers] = useState<Player[]>(initialPlayers);
+  const [players, setPlayers] = useState<IPlayer[]>(initialPlayers);
   const [recentMatches, setRecentMatches] = useState<MatchResult[]>([]);
   const [isAddingMatch, setIsAddingMatch] = useState(false);
   const [alert, setAlert] = useState<{
@@ -139,7 +166,6 @@ export default function AdminDashboard({
     "player1",
   );
   const [timeControl, setTimeControl] = useState("");
-  const [opening, setOpening] = useState("");
   const [moves, setMoves] = useState("");
   const [gameType, setGameType] = useState<"rated" | "casual">("rated");
   const [notes, setNotes] = useState("");
@@ -221,7 +247,6 @@ export default function AdminDashboard({
       result,
       timeControl,
       date: new Date().toISOString().split("T")[0],
-      opening,
       moves: Number.parseInt(moves) || 0,
       gameType,
       notes,
@@ -238,10 +263,15 @@ export default function AdminDashboard({
             gameType === "rated"
               ? player.rating + player1RatingChange
               : player.rating,
-          gamesPlayed: player.gamesPlayed + 1,
-          wins: result === "player1" ? player.wins + 1 : player.wins,
-          losses: result === "player2" ? player.losses + 1 : player.losses,
-          draws: result === "draw" ? player.draws + 1 : player.draws,
+          gamesPlayed: player.stats.totalGames + 1,
+          wins:
+            result === "player1" ? player.stats.wins + 1 : player.stats.wins,
+          losses:
+            result === "player2"
+              ? player.stats.losses + 1
+              : player.stats.losses,
+          draws:
+            result === "draw" ? player.stats.draws + 1 : player.stats.draws,
           lastActive: new Date().toISOString().split("T")[0],
         };
       }
@@ -252,10 +282,15 @@ export default function AdminDashboard({
             gameType === "rated"
               ? player.rating + player2RatingChange
               : player.rating,
-          gamesPlayed: player.gamesPlayed + 1,
-          wins: result === "player2" ? player.wins + 1 : player.wins,
-          losses: result === "player1" ? player.losses + 1 : player.losses,
-          draws: result === "draw" ? player.draws + 1 : player.draws,
+          gamesPlayed: player.stats.totalGames + 1,
+          wins:
+            result === "player2" ? player.stats.wins + 1 : player.stats.wins,
+          losses:
+            result === "player1"
+              ? player.stats.losses + 1
+              : player.stats.losses,
+          draws:
+            result === "draw" ? player.stats.draws + 1 : player.stats.draws,
           lastActive: new Date().toISOString().split("T")[0],
         };
       }
@@ -271,7 +306,6 @@ export default function AdminDashboard({
     setPlayer2Id("");
     setResult("player1");
     setTimeControl("");
-    setOpening("");
     setMoves("");
     setGameType("rated");
     setNotes("");
@@ -424,39 +458,23 @@ export default function AdminDashboard({
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label>Player 1</Label>
-                    <Select value={player1Id} onValueChange={setPlayer1Id}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Player 1" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {players.map((player) => (
-                          <SelectItem key={player.id} value={player.id}>
-                            {player.name} ({player.rating})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  <PlayerSelector
+                    players={players}
+                    selectedPlayerId={player1Id}
+                    onPlayerSelect={setPlayer1Id}
+                    placeholder="Search and select Player 1"
+                    excludePlayerId={player2Id}
+                    label="Player 1"
+                  />
 
-                  <div className="space-y-2">
-                    <Label>Player 2</Label>
-                    <Select value={player2Id} onValueChange={setPlayer2Id}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Player 2" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {players
-                          .filter((p) => p.id !== player1Id)
-                          .map((player) => (
-                            <SelectItem key={player.id} value={player.id}>
-                              {player.name} ({player.rating})
-                            </SelectItem>
-                          ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  <PlayerSelector
+                    players={players}
+                    selectedPlayerId={player2Id}
+                    onPlayerSelect={setPlayer2Id}
+                    placeholder="Search and select Player 2"
+                    excludePlayerId={player1Id}
+                    label="Player 2"
+                  />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -526,16 +544,6 @@ export default function AdminDashboard({
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="opening">Opening</Label>
-                    <Input
-                      id="opening"
-                      placeholder="e.g., Sicilian Defense"
-                      value={opening}
-                      onChange={(e) => setOpening(e.target.value)}
-                    />
-                  </div>
-
                   <div className="space-y-2">
                     <Label htmlFor="moves">Number of Moves</Label>
                     <Input
@@ -649,8 +657,6 @@ export default function AdminDashboard({
                         <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                           <span>Time: {match.timeControl}</span>
                           <Separator orientation="vertical" className="h-4" />
-                          <span>Opening: {match.opening}</span>
-                          <Separator orientation="vertical" className="h-4" />
                           <span>Moves: {match.moves}</span>
                         </div>
 
@@ -705,17 +711,22 @@ export default function AdminDashboard({
                             </p>
                           </div>
                           <div className="text-center">
-                            <p className="font-bold">{player.gamesPlayed}</p>
+                            <p className="font-bold">
+                              {player.stats.totalGames}
+                            </p>
                             <p className="text-xs text-muted-foreground">
                               Games
                             </p>
                           </div>
                           <div className="text-center">
                             <p className="font-bold">
-                              {(
-                                (player.wins / player.gamesPlayed) *
-                                100
-                              ).toFixed(1)}
+                              {player.stats.totalGames > 0
+                                ? (
+                                    (player.stats.wins /
+                                      player.stats.gamesPlayed) *
+                                    100
+                                  ).toFixed(1)
+                                : "0.0"}
                               %
                             </p>
                             <p className="text-xs text-muted-foreground">

@@ -51,7 +51,6 @@ const mockPlayers: IPlayer[] = [
         ratingChange: +12,
         moves: 38,
         gameType: "rated",
-        opening: "Queen's Gambit",
       },
       {
         id: "g2",
@@ -64,7 +63,6 @@ const mockPlayers: IPlayer[] = [
         ratingChange: +8,
         moves: 45,
         gameType: "rated",
-        opening: "Sicilian Defense",
       },
       {
         id: "g3",
@@ -77,7 +75,6 @@ const mockPlayers: IPlayer[] = [
         ratingChange: -2,
         moves: 67,
         gameType: "rated",
-        opening: "English Opening",
       },
       {
         id: "g4",
@@ -90,7 +87,6 @@ const mockPlayers: IPlayer[] = [
         ratingChange: +6,
         moves: 29,
         gameType: "rated",
-        opening: "Sicilian Defense",
       },
       {
         id: "g5",
@@ -103,19 +99,7 @@ const mockPlayers: IPlayer[] = [
         ratingChange: +5,
         moves: 52,
         gameType: "rated",
-        opening: "Ruy Lopez",
       },
-    ],
-    ratingHistory: [
-      { date: "2023-09-15", rating: 1834 },
-      { date: "2023-10-01", rating: 1867 },
-      { date: "2023-10-15", rating: 1923 },
-      { date: "2023-11-01", rating: 1956 },
-      { date: "2023-11-15", rating: 2012 },
-      { date: "2023-12-01", rating: 2089 },
-      { date: "2023-12-15", rating: 2134 },
-      { date: "2024-01-01", rating: 2156 },
-      { date: "2024-01-15", rating: 2156 },
     ],
   },
   // Add other mock players here if needed
