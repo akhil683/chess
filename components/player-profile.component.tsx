@@ -176,9 +176,9 @@ export default function PlayerProfile({
                 >
                   {player.rating}
                 </Badge>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Current Rating
-                </p>
+                {/* <p className="text-sm text-muted-foreground mt-2"> */}
+                {/*   Current Rating */}
+                {/* </p> */}
               </div>
             </div>
           </CardContent>
@@ -186,11 +186,9 @@ export default function PlayerProfile({
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="games">Game History</TabsTrigger>
-            <TabsTrigger value="statistics">Statistics</TabsTrigger>
-            <TabsTrigger value="progress">Progress</TabsTrigger>
           </TabsList>
 
           {/* Overview Tab */}
@@ -200,8 +198,7 @@ export default function PlayerProfile({
           <GameHistory player={player} />
 
           {/* Statistics Tab */}
-          <PlayerStatistics player={player} />
-          {/* Progress Tab */}
+          {/* <PlayerStatistics player={player} /> */}
         </Tabs>
       </div>
     </div>

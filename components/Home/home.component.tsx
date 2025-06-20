@@ -21,7 +21,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
 import {
   ArrowUpDown,
   Crown,
@@ -429,9 +428,7 @@ export default function ChessLeaderboard() {
                         {player.name}
                       </button>
                       <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                        <span>{player.department}</span>
-                        <Separator orientation="vertical" className="h-4" />
-                        <span>Roll: {player.rollNumber}</span>
+                        <span>{player.rollNumber}</span>
                       </div>
                     </div>
                   </div>

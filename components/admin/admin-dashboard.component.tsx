@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -14,7 +13,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
@@ -462,18 +460,18 @@ export default function AdminDashboard({
                     players={players}
                     selectedPlayerId={player1Id}
                     onPlayerSelect={setPlayer1Id}
-                    placeholder="Search and select Player 1"
+                    placeholder="Search player with white pieces"
                     excludePlayerId={player2Id}
-                    label="Player 1"
+                    label="White"
                   />
 
                   <PlayerSelector
                     players={players}
                     selectedPlayerId={player2Id}
                     onPlayerSelect={setPlayer2Id}
-                    placeholder="Search and select Player 2"
+                    placeholder="Search player with black pieces"
                     excludePlayerId={player1Id}
-                    label="Player 2"
+                    label="Black"
                   />
                 </div>
 
@@ -494,13 +492,13 @@ export default function AdminDashboard({
                           {player1Id
                             ? players.find((p) => p.id === player1Id)?.name +
                               " Won"
-                            : "Player 1 Won"}
+                            : "White Won"}
                         </SelectItem>
                         <SelectItem value="player2">
                           {player2Id
                             ? players.find((p) => p.id === player2Id)?.name +
                               " Won"
-                            : "Player 2 Won"}
+                            : "Black Won"}
                         </SelectItem>
                         <SelectItem value="draw">Draw</SelectItem>
                       </SelectContent>
@@ -543,29 +541,29 @@ export default function AdminDashboard({
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="moves">Number of Moves</Label>
-                    <Input
-                      id="moves"
-                      type="number"
-                      placeholder="e.g., 42"
-                      value={moves}
-                      onChange={(e) => setMoves(e.target.value)}
-                    />
-                  </div>
-                </div>
+                {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> */}
+                {/*   <div className="space-y-2"> */}
+                {/*     <Label htmlFor="moves">Number of Moves</Label> */}
+                {/*     <Input */}
+                {/*       id="moves" */}
+                {/*       type="number" */}
+                {/*       placeholder="e.g., 42" */}
+                {/*       value={moves} */}
+                {/*       onChange={(e) => setMoves(e.target.value)} */}
+                {/*     /> */}
+                {/*   </div> */}
+                {/* </div> */}
 
-                <div className="space-y-2">
-                  <Label htmlFor="notes">Notes (Optional)</Label>
-                  <Textarea
-                    id="notes"
-                    placeholder="Additional notes about the game..."
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                    rows={3}
-                  />
-                </div>
+                {/* <div className="space-y-2"> */}
+                {/*   <Label htmlFor="notes">Notes (Optional)</Label> */}
+                {/*   <Textarea */}
+                {/*     id="notes" */}
+                {/*     placeholder="Additional notes about the game..." */}
+                {/*     value={notes} */}
+                {/*     onChange={(e) => setNotes(e.target.value)} */}
+                {/*     rows={3} */}
+                {/*   /> */}
+                {/* </div> */}
 
                 <Button onClick={handleAddMatch} className="w-full" size="lg">
                   Add Match Result
