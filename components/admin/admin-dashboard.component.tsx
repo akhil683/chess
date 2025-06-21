@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -15,13 +14,11 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Separator } from "@/components/ui/separator";
 import {
   Plus,
   Users,
   Trophy,
   TrendingUp,
-  Calendar,
   CheckCircle,
   AlertCircle,
   BarChart3,
@@ -29,24 +26,12 @@ import {
 } from "lucide-react";
 import PlayerSelector from "./player-selector.component";
 import { IPlayer } from "@/type";
-
-interface MatchResult {
-  id: string;
-  player1Id: string;
-  player1Name: string;
-  player1Rating: number;
-  player2Id: string;
-  player2Name: string;
-  player2Rating: number;
-  result: "player1" | "player2" | "draw";
-  timeControl: string;
-  date: string;
-  moves: number;
-  gameType: "rated" | "casual";
-  notes?: string;
-  addedBy: string;
-  addedAt: string;
-}
+import AddMatch from "./add-match.component";
+import { MatchResult } from "@/type";
+import RecentMatches from "./recent-matches.component";
+import Players from "./player.component";
+import { calculateRatingChange } from "@/lib/calculage-rating";
+import { getDraftModeProviderForCacheScope } from "next/dist/server/app-render/work-unit-async-storage.external";
 
 const initialPlayers: IPlayer[] = [
   {
@@ -65,14 +50,7 @@ const initialPlayers: IPlayer[] = [
       draws: 5,
       winRate: 71.1,
       currentStreak: 5,
-      longestStreak: 8,
-      averageOpponentRating: 1987,
       ratingPeak: 2189,
-      ratingLow: 1834,
-      favoriteOpening: "Sicilian Defense",
-      averageGameLength: 42,
-      whiteWinRate: 75.0,
-      blackWinRate: 67.4,
     },
     recentGames: [
       {
@@ -84,8 +62,6 @@ const initialPlayers: IPlayer[] = [
         timeControl: "10+5",
         date: "2024-01-15",
         ratingChange: +12,
-        moves: 38,
-        gameType: "rated",
       },
       {
         id: "g2",
@@ -96,8 +72,6 @@ const initialPlayers: IPlayer[] = [
         timeControl: "15+10",
         date: "2024-01-14",
         ratingChange: +8,
-        moves: 45,
-        gameType: "rated",
       },
       {
         id: "g3",
@@ -108,8 +82,6 @@ const initialPlayers: IPlayer[] = [
         timeControl: "10+5",
         date: "2024-01-13",
         ratingChange: -2,
-        moves: 67,
-        gameType: "rated",
       },
       {
         id: "g4",
@@ -120,8 +92,6 @@ const initialPlayers: IPlayer[] = [
         timeControl: "5+3",
         date: "2024-01-12",
         ratingChange: +6,
-        moves: 29,
-        gameType: "rated",
       },
       {
         id: "g5",
@@ -132,8 +102,6 @@ const initialPlayers: IPlayer[] = [
         timeControl: "15+10",
         date: "2024-01-11",
         ratingChange: +5,
-        moves: 52,
-        gameType: "rated",
       },
     ],
   },
@@ -168,18 +136,6 @@ export default function AdminDashboard({
   const [gameType, setGameType] = useState<"rated" | "casual">("rated");
   const [notes, setNotes] = useState("");
 
-  // Calculate rating change using simplified ELO system
-  const calculateRatingChange = (
-    playerRating: number,
-    opponentRating: number,
-    result: number,
-  ) => {
-    const K = 32; // K-factor
-    const expectedScore =
-      1 / (1 + Math.pow(10, (opponentRating - playerRating) / 400));
-    return Math.round(K * (result - expectedScore));
-  };
-
   const handleAddMatch = () => {
     if (!player1Id || !player2Id || player1Id === player2Id) {
       setAlert({
@@ -193,45 +149,25 @@ export default function AdminDashboard({
     const player2 = players.find((p) => p.id === player2Id)!;
 
     // Calculate rating changes for rated games
-    let player1RatingChange = 0;
-    let player2RatingChange = 0;
-
-    if (gameType === "rated") {
-      if (result === "player1") {
-        player1RatingChange = calculateRatingChange(
-          player1.rating,
-          player2.rating,
-          1,
-        );
-        player2RatingChange = calculateRatingChange(
-          player2.rating,
-          player1.rating,
-          0,
-        );
-      } else if (result === "player2") {
-        player1RatingChange = calculateRatingChange(
-          player1.rating,
-          player2.rating,
-          0,
-        );
-        player2RatingChange = calculateRatingChange(
-          player2.rating,
-          player1.rating,
-          1,
-        );
-      } else {
-        player1RatingChange = calculateRatingChange(
-          player1.rating,
-          player2.rating,
-          0.5,
-        );
-        player2RatingChange = calculateRatingChange(
-          player2.rating,
-          player1.rating,
-          0.5,
-        );
-      }
+    let gameResult = "win";
+    if (result === "player1") {
+      gameResult = "win";
+    } else if (result === "player2") {
+      gameResult = "loss";
+    } else {
+      gameResult = "draw";
     }
+
+    let player1RatingChange = calculateRatingChange(
+      player1.rating,
+      player2.rating,
+      gameResult,
+    ).player1rating;
+    let player2RatingChange = calculateRatingChange(
+      player1.rating,
+      player2.rating,
+      gameResult,
+    ).player2rating;
 
     // Create match result
     const matchResult: MatchResult = {
@@ -276,10 +212,7 @@ export default function AdminDashboard({
       if (player.id === player2Id) {
         return {
           ...player,
-          rating:
-            gameType === "rated"
-              ? player.rating + player2RatingChange
-              : player.rating,
+          rating: player.rating + player2RatingChange,
           gamesPlayed: player.stats.totalGames + 1,
           wins:
             result === "player2" ? player.stats.wins + 1 : player.stats.wins,
@@ -315,23 +248,6 @@ export default function AdminDashboard({
     });
   };
 
-  const getResultText = (match: MatchResult) => {
-    if (match.result === "player1") return `${match.player1Name} won`;
-    if (match.result === "player2") return `${match.player2Name} won`;
-    return "Draw";
-  };
-
-  const getResultColor = (match: MatchResult, playerId: string) => {
-    if (match.result === "draw") return "text-yellow-600";
-    if (
-      (match.result === "player1" && playerId === match.player1Id) ||
-      (match.result === "player2" && playerId === match.player2Id)
-    ) {
-      return "text-green-600";
-    }
-    return "text-red-600";
-  };
-
   const handleBack = () => {
     if (onBack) {
       onBack();
@@ -356,10 +272,10 @@ export default function AdminDashboard({
   const averageRating = Math.round(
     players.reduce((sum, p) => sum + p.rating, 0) / players.length,
   );
-  const topPlayer = players.reduce(
-    (top, player) => (player.rating > top.rating ? player : top),
-    players[0],
-  );
+  // const topPlayer = players.reduce(
+  //   (top, player) => (player.rating > top.rating ? player : top),
+  //   players[0],
+  // );
 
   return (
     <div className="min-h-screen bg-background">
@@ -446,6 +362,16 @@ export default function AdminDashboard({
           </TabsList>
 
           {/* Add Match Tab */}
+          <AddMatch
+            player2Id={player2Id}
+            players={players}
+            player1Id={player1Id}
+            setPlayer2Id={setPlayer2Id}
+            setPlayer1Id={setPlayer1Id}
+            result={result}
+            setResult={setResult}
+            handleAddMatch={handleAddMatch}
+          />
           <TabsContent value="add-match">
             <Card>
               <CardHeader>
@@ -541,30 +467,6 @@ export default function AdminDashboard({
                   </div>
                 </div>
 
-                {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> */}
-                {/*   <div className="space-y-2"> */}
-                {/*     <Label htmlFor="moves">Number of Moves</Label> */}
-                {/*     <Input */}
-                {/*       id="moves" */}
-                {/*       type="number" */}
-                {/*       placeholder="e.g., 42" */}
-                {/*       value={moves} */}
-                {/*       onChange={(e) => setMoves(e.target.value)} */}
-                {/*     /> */}
-                {/*   </div> */}
-                {/* </div> */}
-
-                {/* <div className="space-y-2"> */}
-                {/*   <Label htmlFor="notes">Notes (Optional)</Label> */}
-                {/*   <Textarea */}
-                {/*     id="notes" */}
-                {/*     placeholder="Additional notes about the game..." */}
-                {/*     value={notes} */}
-                {/*     onChange={(e) => setNotes(e.target.value)} */}
-                {/*     rows={3} */}
-                {/*   /> */}
-                {/* </div> */}
-
                 <Button onClick={handleAddMatch} className="w-full" size="lg">
                   Add Match Result
                 </Button>
@@ -573,177 +475,10 @@ export default function AdminDashboard({
           </TabsContent>
 
           {/* Recent Matches Tab */}
-          <TabsContent value="recent-matches">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Calendar className="w-5 h-5" />
-                  Recent Matches ({recentMatches.length})
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {recentMatches.length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <Trophy className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                    <p>No matches recorded yet.</p>
-                    <p className="text-sm">
-                      Add your first match result to get started!
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {recentMatches.map((match) => (
-                      <div key={match.id} className="p-4 border rounded-lg">
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center space-x-4">
-                            <Badge
-                              variant={
-                                match.gameType === "rated"
-                                  ? "default"
-                                  : "secondary"
-                              }
-                            >
-                              {match.gameType}
-                            </Badge>
-                            <span className="font-medium">
-                              {getResultText(match)}
-                            </span>
-                          </div>
-                          <span className="text-sm text-muted-foreground">
-                            {match.date}
-                          </span>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
-                          <div className="flex items-center justify-between p-2 bg-muted/50 rounded">
-                            <span>{match.player1Name}</span>
-                            <div className="text-right">
-                              <span className="font-medium">
-                                {match.player1Rating}
-                              </span>
-                              <span
-                                className={`ml-2 text-sm ${getResultColor(match, match.player1Id)}`}
-                              >
-                                {match.result === "player1"
-                                  ? "W"
-                                  : match.result === "draw"
-                                    ? "D"
-                                    : "L"}
-                              </span>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center justify-between p-2 bg-muted/50 rounded">
-                            <span>{match.player2Name}</span>
-                            <div className="text-right">
-                              <span className="font-medium">
-                                {match.player2Rating}
-                              </span>
-                              <span
-                                className={`ml-2 text-sm ${getResultColor(match, match.player2Id)}`}
-                              >
-                                {match.result === "player2"
-                                  ? "W"
-                                  : match.result === "draw"
-                                    ? "D"
-                                    : "L"}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                          <span>Time: {match.timeControl}</span>
-                          <Separator orientation="vertical" className="h-4" />
-                          <span>Moves: {match.moves}</span>
-                        </div>
-
-                        {match.notes && (
-                          <p className="text-sm text-muted-foreground mt-2 italic">
-                            {match.notes}
-                          </p>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
+          <RecentMatches recentMatches={recentMatches} />
 
           {/* Players Tab */}
-          <TabsContent value="players">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Users className="w-5 h-5" />
-                  Player Management
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {players
-                    .sort((a, b) => b.rating - a.rating)
-                    .map((player, index) => (
-                      <div
-                        key={player.id}
-                        className="flex items-center justify-between p-4 border rounded-lg"
-                      >
-                        <div className="flex items-center space-x-4">
-                          <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-sm font-bold">
-                            #{index + 1}
-                          </div>
-                          <div>
-                            <p className="font-semibold">{player.name}</p>
-                            <p className="text-sm text-muted-foreground">
-                              {player.department} • Roll: {player.rollNumber}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center space-x-6">
-                          <div className="text-center">
-                            <p className="font-bold">{player.rating}</p>
-                            <p className="text-xs text-muted-foreground">
-                              Rating
-                            </p>
-                          </div>
-                          <div className="text-center">
-                            <p className="font-bold">
-                              {player.stats.totalGames}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              Games
-                            </p>
-                          </div>
-                          <div className="text-center">
-                            <p className="font-bold">
-                              {player.stats.totalGames > 0
-                                ? (
-                                    (player.stats.wins /
-                                      player.stats.gamesPlayed) *
-                                    100
-                                  ).toFixed(1)
-                                : "0.0"}
-                              %
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              Win Rate
-                            </p>
-                          </div>
-                          <div className="text-center">
-                            <p className="text-sm">{player.lastActive}</p>
-                            <p className="text-xs text-muted-foreground">
-                              Last Active
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
+          <Players players={players} />
         </Tabs>
       </div>
     </div>

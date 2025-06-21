@@ -7,8 +7,6 @@ export interface IGame {
   timeControl: string;
   date: string;
   ratingChange: number;
-  moves: number;
-  gameType: "rated" | "casual";
 }
 
 export interface IPlayerStats {
@@ -18,14 +16,25 @@ export interface IPlayerStats {
   draws: number;
   winRate: number;
   currentStreak: number;
-  longestStreak: number;
-  averageOpponentRating: number;
   ratingPeak: number;
-  ratingLow: number;
-  favoriteOpening: string;
-  averageGameLength: number;
-  whiteWinRate: number;
-  blackWinRate: number;
+}
+
+interface MatchResult {
+  id: string;
+  player1Id: string;
+  player1Name: string;
+  player1Rating: number;
+  player2Id: string;
+  player2Name: string;
+  player2Rating: number;
+  result: "player1" | "player2" | "draw";
+  timeControl: string;
+  date: string;
+  moves: number;
+  gameType: "rated" | "casual";
+  notes?: string;
+  addedBy: string;
+  addedAt: string;
 }
 
 export interface IPlayer {
