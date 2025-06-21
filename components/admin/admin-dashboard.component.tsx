@@ -31,7 +31,6 @@ import { MatchResult } from "@/type";
 import RecentMatches from "./recent-matches.component";
 import Players from "./player.component";
 import { calculateRatingChange } from "@/lib/calculage-rating";
-import { getDraftModeProviderForCacheScope } from "next/dist/server/app-render/work-unit-async-storage.external";
 
 const initialPlayers: IPlayer[] = [
   {
@@ -371,6 +370,8 @@ export default function AdminDashboard({
             result={result}
             setResult={setResult}
             handleAddMatch={handleAddMatch}
+            timeControl={timeControl}
+            setTimeControl={setTimeControl}
           />
           <TabsContent value="add-match">
             <Card>

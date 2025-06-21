@@ -11,6 +11,20 @@ import { Plus } from "lucide-react";
 import { Button } from "../ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
 import PlayerSelector from "./player-selector.component";
+import { IPlayer } from "@/type";
+
+interface PropType {
+  players: IPlayer[];
+  player1Id: string;
+  setPlayer1Id: (id: string) => void;
+  player2Id: string;
+  setPlayer2Id: (id: string) => void;
+  result: "player1" | "player2" | "draw";
+  setResult: (result: "player1" | "player2" | "draw") => void;
+  handleAddMatch: () => void;
+  timeControl: string;
+  setTimeControl: () => void;
+}
 
 export default function AddMatch({
   players,
@@ -21,7 +35,9 @@ export default function AddMatch({
   result,
   setResult,
   handleAddMatch,
-}) {
+  timeControl,
+  setTimeControl,
+}: PropType) {
   return (
     <TabsContent value="add-match">
       <Card>
