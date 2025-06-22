@@ -10,7 +10,7 @@ export async function connectToDatabase(): Promise<Db> {
 
   const client = new MongoClient(process.env.MONGODB_URI!);
   await client.connect();
-  const db = client.db(process.env.MONGODB_DB_NAME || "chess_tournament");
+  const db = client.db("chess_tournament");
   cachedDb = db;
   return db;
 }

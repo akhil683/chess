@@ -1,5 +1,5 @@
+import { IPlayer } from "@/type";
 import { clsx, type ClassValue } from "clsx";
-import { ObjectId } from "mongodb";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -39,6 +39,14 @@ export const formatDate = (dateString: string) => {
     year: "numeric",
   });
 };
-export function generateId(): string {
-  return new ObjectId().toString();
-}
+
+export const getRatingBadgeColor = (rating: number) => {
+  if (rating >= 2000) return "bg-purple-100 text-purple-800 border-purple-200";
+  if (rating >= 1800) return "bg-blue-100 text-blue-800 border-blue-200";
+  if (rating >= 1600) return "bg-green-100 text-green-800 border-green-200";
+  return "bg-gray-100 text-gray-800 border-gray-200";
+};
+
+export const getWinRate = (player: IPlayer) => {
+  return ((player.stats.wins / player.stats.totalGames) * 100).toFixed(1);
+};

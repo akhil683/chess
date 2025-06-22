@@ -21,6 +21,7 @@ import { MatchResult } from "@/type";
 import RecentMatches from "./recent-matches.component";
 import Players from "./player.component";
 import { calculateRatingChange } from "@/lib/calculage-rating";
+import AddPlayer from "./add-player.component";
 
 const initialPlayers: IPlayer[] = [
   {
@@ -176,6 +177,7 @@ export default function AdminDashboard({
       addedBy: "Admin",
       addedAt: new Date().toISOString(),
     };
+    console.log(matchResult);
 
     // Update players
     const updatedPlayers = players.map((player) => {
@@ -261,11 +263,6 @@ export default function AdminDashboard({
   const averageRating = Math.round(
     players.reduce((sum, p) => sum + p.rating, 0) / players.length,
   );
-  // const topPlayer = players.reduce(
-  //   (top, player) => (player.rating > top.rating ? player : top),
-  //   players[0],
-  // );
-
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
@@ -344,8 +341,9 @@ export default function AdminDashboard({
         </div>
 
         <Tabs defaultValue="add-match" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="add-match">Add Match</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="add-match">Add Match</TabsTrigger>{" "}
+            <TabsTrigger value="add-player">Add Player</TabsTrigger>
             <TabsTrigger value="recent-matches">Recent Matches</TabsTrigger>
             <TabsTrigger value="players">Players</TabsTrigger>
           </TabsList>
@@ -364,6 +362,8 @@ export default function AdminDashboard({
             setTimeControl={setTimeControl}
           />
 
+          {/* Add New Player Tab */}
+          <AddPlayer />
           {/* Recent Matches Tab */}
           <RecentMatches recentMatches={recentMatches} />
 
