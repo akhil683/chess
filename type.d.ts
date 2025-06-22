@@ -37,6 +37,33 @@ interface MatchResult {
   addedAt: string;
 }
 
+interface MatchResultAdvance {
+  id: string;
+  player1: {
+    id: string;
+    name: string;
+    rating: number;
+    ratingAfter: number;
+    ratingChange: number;
+    color: "white" | "black";
+  };
+  player2: {
+    id: string;
+    name: string;
+    rating: number;
+    ratingAfter: number;
+    ratingChange: number;
+    color: "white" | "black";
+  };
+  result: "player1" | "player2" | "draw";
+  timeControl: string;
+  date: string;
+  moves: number;
+  gameType: "rated" | "casual";
+  notes?: string;
+  addedBy: string;
+  addedAt: string;
+}
 export interface IPlayer {
   id: string;
   name: string;

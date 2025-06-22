@@ -1,28 +1,16 @@
-import { MongoClient } from "mongodb";
+"use server";
 
-const uri = process.env.MONGODB_URI as string;
-const options = {};
+import { MongoClient, Db } from "mongodb";
+let cachedDb: Db | null = null;
 
-let client;
-let clientPromise: Promise<MongoClient>;
-
-if (!process.env.MONGODB_URI) {
-  throw new Error("Please define the MONGODB_URI environment variable");
-}
-
-declare global {
-  var _mongoClientPromise: Promise<MongoClient>;
-}
-
-if (process.env.NODE_ENV === "development") {
-  if (!global._mongoClientPromise) {
-    client = new MongoClient(uri, options);
-    global._mongoClientPromise = client.connect();
+export async function connectToDatabase(): Promise<Db> {
+  if (cachedDb) {
+    return cachedDb;
   }
-  clientPromise = global._mongoClientPromise;
-} else {
-  client = new MongoClient(uri, options);
-  clientPromise = client.connect();
-}
 
-export default clientPromise;
+  const client = new MongoClient(process.env.MONGODB_URI!);
+  await client.connect();
+  const db = client.db(process.env.MONGODB_DB_NAME || "chess_tournament");
+  cachedDb = db;
+  return db;
+}

@@ -1,14 +1,15 @@
 import { Label } from "@radix-ui/react-dropdown-menu";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@radix-ui/react-select";
 import { TabsContent } from "@radix-ui/react-tabs";
 import { Plus } from "lucide-react";
 import { Button } from "../ui/button";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "../ui/select";
+
 import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
 import PlayerSelector from "./player-selector.component";
 import { IPlayer } from "@/type";
@@ -23,7 +24,7 @@ interface PropType {
   setResult: (result: "player1" | "player2" | "draw") => void;
   handleAddMatch: () => void;
   timeControl: string;
-  setTimeControl: () => void;
+  setTimeControl: (time: string) => void;
 }
 
 export default function AddMatch({

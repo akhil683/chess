@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from "clsx";
+import { ObjectId } from "mongodb";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -38,3 +39,6 @@ export const formatDate = (dateString: string) => {
     year: "numeric",
   });
 };
+export function generateId(): string {
+  return new ObjectId().toString();
+}
