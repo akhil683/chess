@@ -5,16 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import {
-  Users,
-  Trophy,
-  TrendingUp,
-  CheckCircle,
-  AlertCircle,
-  BarChart3,
-  ArrowLeft,
-} from "lucide-react";
+import { Users, Trophy, TrendingUp, BarChart3, ArrowLeft } from "lucide-react";
 import { IPlayer } from "@/type";
 import AddMatch from "./add-match.component";
 import { MatchResult } from "@/type";
@@ -23,91 +14,13 @@ import Players from "./player.component";
 import { calculateRatingChange } from "@/lib/calculage-rating";
 import AddPlayer from "./add-player.component";
 
-const initialPlayers: IPlayer[] = [
-  {
-    id: "1",
-    name: "Alex Chen",
-    rating: 2156,
-    department: "Computer Science",
-    rollNumber: "CS21B1001",
-    joinDate: "2023-09-15",
-    lastActive: "2024-01-15",
-    bio: "Passionate chess player and computer science student. Love tactical puzzles and endgame studies.",
-    stats: {
-      totalGames: 45,
-      wins: 32,
-      losses: 8,
-      draws: 5,
-      winRate: 71.1,
-      currentStreak: 5,
-      ratingPeak: 2189,
-    },
-    recentGames: [
-      {
-        id: "g1",
-        opponent: "Sarah Johnson",
-        opponentRating: 2089,
-        result: "win",
-        playerColor: "white",
-        timeControl: "10+5",
-        date: "2024-01-15",
-        ratingChange: +12,
-      },
-      {
-        id: "g2",
-        opponent: "Michael Rodriguez",
-        opponentRating: 1987,
-        result: "win",
-        playerColor: "black",
-        timeControl: "15+10",
-        date: "2024-01-14",
-        ratingChange: +8,
-      },
-      {
-        id: "g3",
-        opponent: "Emma Thompson",
-        opponentRating: 1923,
-        result: "draw",
-        playerColor: "white",
-        timeControl: "10+5",
-        date: "2024-01-13",
-        ratingChange: -2,
-      },
-      {
-        id: "g4",
-        opponent: "David Kim",
-        opponentRating: 1876,
-        result: "win",
-        playerColor: "black",
-        timeControl: "5+3",
-        date: "2024-01-12",
-        ratingChange: +6,
-      },
-      {
-        id: "g5",
-        opponent: "Lisa Wang",
-        opponentRating: 1834,
-        result: "win",
-        playerColor: "white",
-        timeControl: "15+10",
-        date: "2024-01-11",
-        ratingChange: +5,
-      },
-    ],
-  },
-];
-
-interface AdminDashboardProps {
-  onBack?: () => void;
-  onPlayersUpdate?: (players: IPlayer[]) => void;
-}
-
 export default function AdminDashboard({
-  onBack,
-  onPlayersUpdate,
-}: AdminDashboardProps) {
+  allPlayers,
+}: {
+  allPlayers: IPlayer[];
+}) {
   const router = useRouter();
-  const [players, setPlayers] = useState<IPlayer[]>(initialPlayers);
+  const [players, setPlayers] = useState<IPlayer[]>(allPlayers);
   const [recentMatches, setRecentMatches] = useState<MatchResult[]>([]);
   const [isAddingMatch, setIsAddingMatch] = useState(false);
   const [alert, setAlert] = useState<{
@@ -118,13 +31,10 @@ export default function AdminDashboard({
   // Form state
   const [player1Id, setPlayer1Id] = useState("");
   const [player2Id, setPlayer2Id] = useState("");
-  const [result, setResult] = useState<"player1" | "player2" | "draw">(
-    "player1",
-  );
+  const [result, setResult] = useState("draw");
   const [timeControl, setTimeControl] = useState("");
   const [moves, setMoves] = useState("");
   const [gameType, setGameType] = useState<"rated" | "casual">("rated");
-  const [notes, setNotes] = useState("");
 
   const handleAddMatch = () => {
     if (!player1Id || !player2Id || player1Id === player2Id) {
@@ -135,8 +45,8 @@ export default function AdminDashboard({
       return;
     }
 
-    const player1 = players.find((p) => p.id === player1Id)!;
-    const player2 = players.find((p) => p.id === player2Id)!;
+    const player1 = players.find((p) => p.rollNumber === player1Id)!;
+    const player2 = players.find((p) => p.rollNumber === player2Id)!;
 
     // Calculate rating changes for rated games
     let gameResult = "win";
@@ -168,16 +78,20 @@ export default function AdminDashboard({
       player2Id,
       player2Name: player2.name,
       player2Rating: player2.rating,
-      result,
+      result:
+        result === "player1"
+          ? player1.rollNumber
+          : result === "player2"
+            ? player2.rollNumber
+            : "draw",
       timeControl,
       date: new Date().toISOString().split("T")[0],
       moves: Number.parseInt(moves) || 0,
       gameType,
-      notes,
       addedBy: "Admin",
       addedAt: new Date().toISOString(),
     };
-    console.log(matchResult);
+    console.log("match result", matchResult);
 
     // Update players
     const updatedPlayers = players.map((player) => {
@@ -221,7 +135,6 @@ export default function AdminDashboard({
 
     setPlayers(updatedPlayers);
     setRecentMatches([matchResult, ...recentMatches]);
-    onPlayersUpdate?.(updatedPlayers);
 
     // Reset form
     setPlayer1Id("");
@@ -230,7 +143,6 @@ export default function AdminDashboard({
     setTimeControl("");
     setMoves("");
     setGameType("rated");
-    setNotes("");
     setIsAddingMatch(false);
 
     setAlert({
@@ -240,17 +152,13 @@ export default function AdminDashboard({
   };
 
   const handleBack = () => {
-    if (onBack) {
-      onBack();
-    } else {
-      router.push("/");
-    }
+    router.push("/");
   };
 
   const handleTournamentsClick = () => {
     router.push("/tournaments");
   };
-
+  console.log("whitte", player1Id);
   useEffect(() => {
     if (alert) {
       const timer = setTimeout(() => setAlert(null), 5000);
@@ -287,26 +195,6 @@ export default function AdminDashboard({
             </div>
           </div>
         </div>
-
-        {/* Alert */}
-        {alert && (
-          <Alert
-            className={`mb-6 ${alert.type === "success" ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50"}`}
-          >
-            {alert.type === "success" ? (
-              <CheckCircle className="h-4 w-4 text-green-600" />
-            ) : (
-              <AlertCircle className="h-4 w-4 text-red-600" />
-            )}
-            <AlertDescription
-              className={
-                alert.type === "success" ? "text-green-800" : "text-red-800"
-              }
-            >
-              {alert.message}
-            </AlertDescription>
-          </Alert>
-        )}
 
         {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -364,6 +252,7 @@ export default function AdminDashboard({
 
           {/* Add New Player Tab */}
           <AddPlayer />
+
           {/* Recent Matches Tab */}
           <RecentMatches recentMatches={recentMatches} />
 

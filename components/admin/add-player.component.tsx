@@ -61,18 +61,17 @@ export default function AddPlayer() {
         ratingPeak: 1200,
       },
     };
-    console.log(newPlayer);
-    createPlayer(newPlayer);
-    // Reset form
-    setNewPlayerName("");
-    setNewPlayerDepartment("");
-    setNewPlayerRollNumber("");
-    setNewPlayerBio("");
-
-    // setAlert({
-    //   type: "success",
-    //   message: `Player ${newPlayerName} added successfully!`,
-    // });
+    try {
+      createPlayer(newPlayer);
+      setNewPlayerName("");
+      setNewPlayerDepartment("");
+      setNewPlayerRollNumber("");
+      setNewPlayerBio("");
+      alert("Player Added.");
+    } catch (error) {
+      console.log(error);
+      alert("Error occured.");
+    }
   };
   return (
     <TabsContent value="add-player">

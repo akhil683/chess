@@ -27,7 +27,7 @@ interface MatchResult {
   player2Id: string;
   player2Name: string;
   player2Rating: number;
-  result: "player1" | "player2" | "draw";
+  result: string;
   timeControl: string;
   date: string;
   moves: number;

@@ -14,7 +14,6 @@ import {
 } from "../ui/command";
 import { cn } from "@/lib/utils";
 
-// Searchable Player Selector Component
 interface PlayerSelectorProps {
   players: IPlayer[];
   selectedPlayerId: string;
@@ -36,10 +35,10 @@ export default function PlayerSelector({
   const [searchValue, setSearchValue] = useState("");
 
   const selectedPlayer = players.find(
-    (player) => player.id === selectedPlayerId,
+    (player) => player.rollNumber === selectedPlayerId,
   );
   const availablePlayers = players.filter(
-    (player) => player.id !== excludePlayerId,
+    (player) => player.rollNumber !== excludePlayerId,
   );
 
   const filteredPlayers = availablePlayers.filter((player) => {
@@ -51,7 +50,6 @@ export default function PlayerSelector({
       player.rating.toString().includes(searchTerm)
     );
   });
-
   return (
     <div className="space-y-2">
       <Label>{label}</Label>
@@ -88,10 +86,10 @@ export default function PlayerSelector({
               <CommandGroup>
                 {filteredPlayers.map((player: IPlayer) => (
                   <CommandItem
-                    key={player.id}
-                    value={player.id}
+                    key={player.rollNumber}
+                    value={player.rollNumber}
                     onSelect={() => {
-                      onPlayerSelect(player.id);
+                      onPlayerSelect(player.rollNumber);
                       setOpen(false);
                       setSearchValue("");
                     }}
@@ -99,7 +97,7 @@ export default function PlayerSelector({
                     <Check
                       className={cn(
                         "mr-2 h-4 w-4",
-                        selectedPlayerId === player.id
+                        selectedPlayerId === player.rollNumber
                           ? "opacity-100"
                           : "opacity-0",
                       )}
