@@ -1,4 +1,4 @@
-import { getRatingBadgeColor, getWinRate } from "@/lib/utils";
+import { getRatingBadgeColor } from "@/lib/utils";
 import { Crown, Medal, Trophy } from "lucide-react";
 import { Badge } from "../ui/badge";
 import { Card, CardContent } from "../ui/card";
@@ -62,7 +62,7 @@ export default function LeaderboardCard({
 
             <div className="text-center">
               <p className="text-lg font-semibold text-green-600">
-                {getWinRate(player)}%
+                {player.stats.winRate}%
               </p>
               <p className="text-xs text-muted-foreground">Win Rate</p>
             </div>

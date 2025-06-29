@@ -21,11 +21,14 @@ import {
 } from "@/components/ui/select";
 import { ArrowUpDown, Search, Filter } from "lucide-react";
 import { IPlayer } from "@/type";
-import { mockPlayers } from "@/data/mockPlayers";
 import LeaderboardCard from "./leaderboard-card.component";
 
-export default function ChessLeaderboard() {
-  const [players] = useState<IPlayer[]>(mockPlayers);
+export default function ChessLeaderboard({
+  leaderboard,
+}: {
+  leaderboard: IPlayer[];
+}) {
+  const [players] = useState<IPlayer[]>(leaderboard);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("rating");
   const [departmentFilter, setDepartmentFilter] = useState("all");

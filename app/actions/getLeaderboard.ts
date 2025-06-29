@@ -12,8 +12,9 @@ export async function getLeaderboard(limit: number = 10): Promise<IPlayer[]> {
       .limit(limit)
       .toArray();
 
+    console.log(playerDocs);
     return playerDocs.map((doc: any) => ({
-      id: doc.playerId,
+      id: doc.id,
       name: doc.name,
       rating: doc.rating,
       department: doc.department,
