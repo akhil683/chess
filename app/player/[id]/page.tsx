@@ -1,4 +1,5 @@
-import { getRecentMatchesForPLayer } from "@/app/actions/getRecentMatchForPlayer";
+import { getLeaderboard } from "@/actions/getLeaderboard";
+import { getRecentMatchesForPLayer } from "@/actions/getRecentMatchForPlayer";
 import PlayerProfile from "@/components/player-profile.component";
 
 interface PlayerPageProps {
@@ -9,7 +10,9 @@ interface PlayerPageProps {
 
 export default async function PlayerPage({ params }: PlayerPageProps) {
   const { id } = await params;
-  // const { player } = await getPlayer(id); //TODO:create the server action
-  const { data } = await getRecentMatchesForPLayer(id);
-  return <PlayerProfile player={player} recentGames={data} />; //TODO:fix type
+  const leaderboard = await getLeaderboard();
+  const player = leaderboard.filter((player) => player.id === id);
+  const recentGames = await getRecentMatchesForPLayer(id); //TODO:Fix return type from server action to easily render recent games of a player
+  console.log("recent games", recentGames);
+  return <PlayerProfile player={player[0]} recentGames={recentGames} />;
 }

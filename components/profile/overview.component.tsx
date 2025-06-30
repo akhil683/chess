@@ -1,10 +1,16 @@
 import { BarChart3, Target, Trophy, Zap } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { TabsContent } from "../ui/tabs";
-import { IPlayer } from "@/type";
+import { IPlayer, MatchResult } from "@/type";
 import { formatDate, getResultIcon } from "@/lib/utils";
 
-export default function PlayerOverview({ player }: { player: IPlayer }) {
+export default function PlayerOverview({
+  player,
+  recentGames,
+}: {
+  player: IPlayer;
+  recentGames: MatchResult[];
+}) {
   return (
     <TabsContent value="overview" className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -46,7 +52,8 @@ export default function PlayerOverview({ player }: { player: IPlayer }) {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {player.recentGames.slice(0, 5).map((game) => (
+              {" "}
+              {recentGames.slice(0, 5).map((game) => (
                 <div
                   key={game.id}
                   className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
@@ -64,9 +71,9 @@ export default function PlayerOverview({ player }: { player: IPlayer }) {
                       {getResultIcon(game.result)}
                     </div>
                     <div>
-                      <p className="font-medium">{game.opponent}</p>
+                      <p className="font-medium">{game.player1Name}</p>
                       <p className="text-sm text-muted-foreground">
-                        {game.opening} • {game.timeControl}
+                        {game.timeControl}
                       </p>
                     </div>
                   </div>

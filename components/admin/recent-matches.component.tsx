@@ -1,4 +1,4 @@
-import { TabsContent } from "@radix-ui/react-tabs";
+import { TabsContent } from "../ui/tabs";
 import { Calendar, Trophy } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
 import { Badge } from "../ui/badge";

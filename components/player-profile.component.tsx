@@ -73,7 +73,7 @@ export default function PlayerProfile({
           </TabsList>
 
           {/* Overview Tab */}
-          <PlayerOverview player={player} />
+          <PlayerOverview player={player} recentGames={recentGames} />
 
           {/* Game History Tab */}
           <GameHistory player={player} recentGames={recentGames} />

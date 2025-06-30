@@ -1,4 +1,4 @@
-import { getLeaderboard } from "@/app/actions/getLeaderboard";
+import { getLeaderboard } from "@/actions/getLeaderboard";
 import AdminDashboard from "@/components/admin/admin-dashboard.component";
 
 export default async function AdminPage() {

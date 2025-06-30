@@ -14,7 +14,7 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
 import { IPlayer } from "@/type";
-import { createPlayer } from "@/app/actions/createPlayer";
+import { createPlayer } from "@/actions/createPlayer";
 
 export default function AddPlayer() {
   const [newPlayerName, setNewPlayerName] = useState("");

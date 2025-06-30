@@ -58,12 +58,6 @@ export default async function GameHistory({
                         <p className="text-sm text-muted-foreground">
                           Rating Change
                         </p>
-                        {/* <p */}
-                        {/*   className={`font-medium ${game.ratingChange >= 0 ? "text-green-600" : "text-red-600"}`} */}
-                        {/* > */}
-                        {/*   {game.ratingChange >= 0 ? "+" : ""} */}
-                        {/*   {game.ratingChange} */}
-                        {/* </p> */}
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground">Date</p>

@@ -13,7 +13,7 @@ import RecentMatches from "./recent-matches.component";
 import Players from "./player.component";
 import { calculateRatingChange } from "@/lib/calculage-rating";
 import AddPlayer from "./add-player.component";
-import { addMatchResult } from "@/app/actions/addMatchResult";
+import { addMatchResult } from "@/actions/addMatchResult";
 
 export default function AdminDashboard({
   allPlayers,

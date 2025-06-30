@@ -36,7 +36,7 @@ export default function Players({ players }: { players: IPlayer[] }) {
 
                   <div className="flex items-center space-x-6">
                     <div className="text-center">
-                      <p className="font-bold">{player.rating}</p>
+                      <p className="font-bold">{player.rating.toFixed(1)}</p>
                       <p className="text-xs text-muted-foreground">Rating</p>
                     </div>
                     <div className="text-center">

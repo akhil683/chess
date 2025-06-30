@@ -1,5 +1,5 @@
 import HomeLeaderboard from "@/components/Home/home.component";
-import { getLeaderboard } from "./actions/getLeaderboard";
+import { getLeaderboard } from "@/actions/getLeaderboard";
 
 export default async function Home() {
   const leaderboard = await getLeaderboard();

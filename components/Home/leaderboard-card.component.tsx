@@ -62,7 +62,7 @@ export default function LeaderboardCard({
 
             <div className="text-center">
               <p className="text-lg font-semibold text-green-600">
-                {player.stats.winRate}%
+                {player.stats.winRate * 100}%
               </p>
               <p className="text-xs text-muted-foreground">Win Rate</p>
             </div>
