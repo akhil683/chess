@@ -46,10 +46,7 @@ export default function Players({ players }: { players: IPlayer[] }) {
                     <div className="text-center">
                       <p className="font-bold">
                         {player.stats.totalGames > 0
-                          ? (
-                              (player.stats.wins / player.stats.gamesPlayed) *
-                              100
-                            ).toFixed(1)
+                          ? (player.stats.winRate * 100).toFixed(1)
                           : "0.0"}
                         %
                       </p>

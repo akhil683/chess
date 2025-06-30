@@ -1,6 +1,7 @@
 "use server";
 
 import { connectToDatabase } from "@/lib/db";
+import { IPlayer } from "@/type";
 import { revalidatePath } from "next/cache";
 
 interface MatchResult {
@@ -80,10 +81,10 @@ export async function addMatchResult(
     // Create match result
     const matchResult: MatchResult = {
       id: Date.now().toString(),
-      player1Id,
+      player1Id: player1.id,
       player1Name: player1.name,
       player1Rating: player1.rating,
-      player2Id,
+      player2Id: player2.id,
       player2Name: player2.name,
       player2Rating: player2.rating,
       result:
@@ -108,6 +109,16 @@ export async function addMatchResult(
             ? player1.rating + player1RatingChange
             : player1.rating,
         lastActive: new Date().toISOString().split("T")[0],
+        "stats.currentStreak":
+          result === "player1" ? player1.stats.currentStreak + 1 : 0,
+        "stats.ratingPeak":
+          player1.stats.ratingPeak < player1.rating + player1RatingChange
+            ? player1.rating + player1RatingChange
+            : player1.stats.ratingPeak,
+        "stats.winRate":
+          result === "player1"
+            ? (player1.stats.wins + 1) / (player1.stats.totalGames + 1)
+            : player1.stats.wins / player1.stats.totalGames,
       },
       $inc: {
         "stats.totalGames": 1,
@@ -125,6 +136,16 @@ export async function addMatchResult(
             ? player2.rating + player2RatingChange
             : player2.rating,
         lastActive: new Date().toISOString().split("T")[0],
+        "stats.currentStreak":
+          result === "player2" ? player2.stats.currentStreak + 1 : 0,
+        "stats.ratingPeak":
+          player2.stats.ratingPeak < player2.rating + player2RatingChange
+            ? player2.rating + player2RatingChange
+            : player2.stats.ratingPeak,
+        "stats.winRate":
+          result === "player2"
+            ? (player2.stats.wins + 1) / (player2.stats.totalGames + 1)
+            : player2.stats.wins / player2.stats.totalGames,
       },
       $inc: {
         "stats.totalGames": 1,

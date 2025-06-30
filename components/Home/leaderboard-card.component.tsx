@@ -50,7 +50,7 @@ export default function LeaderboardCard({
           <div className="flex items-center space-x-6">
             <div className="text-center">
               <Badge className={getRatingBadgeColor(player.rating)}>
-                {player.rating}
+                {player.rating.toFixed(1)}
               </Badge>
               <p className="text-xs text-muted-foreground mt-1">Rating</p>
             </div>

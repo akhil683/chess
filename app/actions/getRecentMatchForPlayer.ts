@@ -11,12 +11,11 @@ export async function getRecentMatchesForPLayer(
 
     const recentMatches = await db
       .collection("matches")
-      .find({
-        $or: [{ "player1.id": playerId }, { "player2.id": playerId }],
-      })
+      .find({ $or: [{ player1Id: playerId }, { player2Id: playerId }] })
       .sort({ createdAt: -1 })
       .limit(limit)
       .toArray();
+    console.log("recent", recentMatches);
     return {
       success: true,
       data: recentMatches,
