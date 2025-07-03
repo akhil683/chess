@@ -1,8 +1,6 @@
 import { TabsContent } from "../ui/tabs";
 import { Calendar, Trophy } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
-import { Badge } from "../ui/badge";
-import { Separator } from "../ui/separator";
 import { MatchResult } from "@/type";
 
 interface PropType {
@@ -10,21 +8,19 @@ interface PropType {
 }
 
 export default function RecentMatches({ recentMatches }: PropType) {
+  console.log(recentMatches);
   const getResultText = (match: MatchResult) => {
-    if (match.result === "player1") return `${match.player1Name} won`;
-    if (match.result === "player2") return `${match.player2Name} won`;
+    if (match.result === match.player1Id) return `${match.player1Name} won`;
+    if (match.result === match.player2Id) return `${match.player2Name} won`;
     return "Draw";
   };
 
   const getResultColor = (match: MatchResult, playerId: string) => {
-    if (match.result === "draw") return "text-yellow-600";
-    if (
-      (match.result === "player1" && playerId === match.player1Id) ||
-      (match.result === "player2" && playerId === match.player2Id)
-    ) {
-      return "text-green-600";
+    if (match.result === "draw") return "bg-yellow-800";
+    if (match.result === playerId) {
+      return "bg-green-700";
     }
-    return "text-red-600";
+    return "bg-red-700";
   };
   return (
     <TabsContent value="recent-matches">
@@ -47,36 +43,29 @@ export default function RecentMatches({ recentMatches }: PropType) {
           ) : (
             <div className="space-y-4">
               {recentMatches.map((match) => (
-                <div key={match.id} className="p-4 border rounded-lg">
+                <div
+                  key={match.id}
+                  className="p-4 border rounded-lg text-white"
+                >
                   <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center space-x-4">
-                      <Badge
-                        variant={
-                          match.gameType === "rated" ? "default" : "secondary"
-                        }
-                      >
-                        {match.gameType}
-                      </Badge>
-                      <span className="font-medium">
+                    <div className="flex items-center space-x-4 text-black">
+                      <span className="font-medium text-black">
                         {getResultText(match)}
                       </span>
                     </div>
-                    <span className="text-sm text-muted-foreground">
-                      {match.date}
-                    </span>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
-                    <div className="flex items-center justify-between p-2 bg-muted/50 rounded">
+                    <div
+                      className={`flex items-center justify-between p-2 rounded ${getResultColor(match, match.player1Id)}`}
+                    >
                       <span>{match.player1Name}</span>
                       <div className="text-right">
                         <span className="font-medium">
-                          {match.player1Rating}
+                          {match.player1Rating.toFixed(1)}
                         </span>
-                        <span
-                          className={`ml-2 text-sm ${getResultColor(match, match.player1Id)}`}
-                        >
-                          {match.result === "player1"
+                        <span className={`ml-2 text-sm font-semibold`}>
+                          {match.result === match.player1Id
                             ? "W"
                             : match.result === "draw"
                               ? "D"
@@ -85,16 +74,16 @@ export default function RecentMatches({ recentMatches }: PropType) {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between p-2 bg-muted/50 rounded">
+                    <div
+                      className={`flex items-center justify-between p-2 rounded ${getResultColor(match, match.player2Id)}`}
+                    >
                       <span>{match.player2Name}</span>
                       <div className="text-right">
                         <span className="font-medium">
-                          {match.player2Rating}
+                          {match.player2Rating.toFixed(1)}
                         </span>
-                        <span
-                          className={`ml-2 text-sm ${getResultColor(match, match.player2Id)}`}
-                        >
-                          {match.result === "player2"
+                        <span className={`ml-2 text-sm font-semibold`}>
+                          {match.result === match.player2Id
                             ? "W"
                             : match.result === "draw"
                               ? "D"
@@ -106,8 +95,6 @@ export default function RecentMatches({ recentMatches }: PropType) {
 
                   <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                     <span>Time: {match.timeControl}</span>
-                    <Separator orientation="vertical" className="h-4" />
-                    <span>Moves: {match.moves}</span>
                   </div>
 
                   {match.notes && (

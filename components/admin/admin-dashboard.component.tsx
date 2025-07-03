@@ -24,8 +24,6 @@ export default function AdminDashboard({
 }) {
   const router = useRouter();
   const [players, setPlayers] = useState<IPlayer[]>(allPlayers);
-  const [recentMatches, setRecentMatches] =
-    useState<MatchResult[]>(initialMatches);
   const [alert, setAlert] = useState<{
     type: "success" | "error";
     message: string;
@@ -148,8 +146,10 @@ export default function AdminDashboard({
   }, [alert]);
 
   // Calculate stats
-  const totalGames = recentMatches.length;
-  const ratedGames = recentMatches.filter((m) => m.gameType === "rated").length;
+  const totalGames = initialMatches.length;
+  const ratedGames = initialMatches.filter(
+    (m) => m.gameType === "rated",
+  ).length;
   const averageRating =
     players.length > 0
       ? Math.round(
@@ -255,7 +255,7 @@ export default function AdminDashboard({
           <AddPlayer />
 
           {/* Recent Matches Tab */}
-          <RecentMatches recentMatches={recentMatches} />
+          <RecentMatches recentMatches={initialMatches} />
 
           {/* Players Tab */}
           <Players players={players} />

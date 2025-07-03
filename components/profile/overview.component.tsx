@@ -77,17 +77,17 @@ export default function PlayerOverview({
                       </p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p
-                      className={`font-medium ${game.ratingChange >= 0 ? "text-green-600" : "text-red-600"}`}
-                    >
-                      {game.ratingChange >= 0 ? "+" : ""}
-                      {game.ratingChange}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {formatDate(game.date)}
-                    </p>
-                  </div>
+                  {/* <div className="text-right"> */}
+                  {/*   <p */}
+                  {/*     className={`font-medium ${game.ratingChange >= 0 ? "text-green-600" : "text-red-600"}`} */}
+                  {/*   > */}
+                  {/*     {game.ratingChange >= 0 ? "+" : ""} */}
+                  {/*     {game.ratingChange} */}
+                  {/*   </p> */}
+                  {/*   <p className="text-sm text-muted-foreground"> */}
+                  {/*     {formatDate(game.date)} */}
+                  {/*   </p> */}
+                  {/* </div> */}
                 </div>
               ))}
             </div>
