@@ -95,9 +95,9 @@ export default function ChessLeaderboard({
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-center">
             <div>
-              <h1 className="text-4xl font-bold mb-2 text-center">
+              <h1 className="text-4xl font-bold mb-2">
                 NITH Chess Leaderboard
               </h1>
               <p className="text-muted-foreground text-center">
@@ -145,29 +145,6 @@ export default function ChessLeaderboard({
                     {departments.map((dept) => (
                       <SelectItem key={dept} value={dept}>
                         {dept}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Roll Number</Label>
-                <Select
-                  value={rollNumberFilter}
-                  onValueChange={setRollNumberFilter}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="All Roll Numbers" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Roll Numbers</SelectItem>
-                    {rollNumbers.map((rollNumber) => (
-                      <SelectItem
-                        key={rollNumber}
-                        value={rollNumber.toString()}
-                      >
-                        {rollNumber}
                       </SelectItem>
                     ))}
                   </SelectContent>

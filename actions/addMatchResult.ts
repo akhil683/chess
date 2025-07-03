@@ -1,7 +1,6 @@
 "use server";
 
 import { connectToDatabase } from "@/lib/db";
-import { IPlayer } from "@/type";
 import { revalidatePath } from "next/cache";
 
 interface MatchResult {
@@ -81,10 +80,10 @@ export async function addMatchResult(
     // Create match result
     const matchResult: MatchResult = {
       id: Date.now().toString(),
-      player1Id: player1.id,
+      player1Id: player1Id,
       player1Name: player1.name,
       player1Rating: player1.rating,
-      player2Id: player2.id,
+      player2Id: player2Id,
       player2Name: player2.name,
       player2Rating: player2.rating,
       result:

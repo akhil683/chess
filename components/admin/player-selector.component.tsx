@@ -65,7 +65,7 @@ export default function PlayerSelector({
               <div className="flex items-center justify-between w-full">
                 <span>{selectedPlayer.name}</span>
                 <span className="text-muted-foreground">
-                  ({selectedPlayer.rating})
+                  ({selectedPlayer.rating.toFixed(1)})
                 </span>
               </div>
             ) : (
@@ -106,11 +106,13 @@ export default function PlayerSelector({
                       <div>
                         <div className="font-medium">{player.name}</div>
                         <div className="text-sm text-muted-foreground">
-                          {player.department} • {player.rollNumber}
+                          {player.rollNumber}
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="font-medium">{player.rating}</div>
+                        <div className="font-medium">
+                          {player.rating.toFixed(1)}
+                        </div>
                         <div className="text-sm text-muted-foreground">
                           {player.stats.totalGames} games
                         </div>
