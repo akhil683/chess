@@ -41,36 +41,36 @@ export default function PlayerProgress({ player }: { player: IPlayer }) {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <h4 className="font-medium">Rating History</h4>
-              {player.ratingHistory.map((entry, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between p-2 rounded bg-muted/30"
-                >
-                  <span className="text-sm">{formatDate(entry.date)}</span>
-                  <div className="flex items-center space-x-2">
-                    <span className="font-medium">{entry.rating}</span>
-                    {index > 0 && (
-                      <span
-                        className={`text-xs ${
-                          entry.rating > player.ratingHistory[index - 1].rating
-                            ? "text-green-600"
-                            : entry.rating <
-                                player.ratingHistory[index - 1].rating
-                              ? "text-red-600"
-                              : "text-gray-600"
-                        }`}
-                      >
-                        {entry.rating >
-                          player.ratingHistory[index - 1].rating && "+"}
-                        {entry.rating - player.ratingHistory[index - 1].rating}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
+            {/* <div className="space-y-2"> */}
+            {/*   <h4 className="font-medium">Rating History</h4> */}
+            {/*   {player.ratingHistory.map((entry, index) => ( */}
+            {/*     <div */}
+            {/*       key={index} */}
+            {/*       className="flex items-center justify-between p-2 rounded bg-muted/30" */}
+            {/*     > */}
+            {/*       <span className="text-sm">{formatDate(entry.date)}</span> */}
+            {/*       <div className="flex items-center space-x-2"> */}
+            {/*         <span className="font-medium">{entry.rating}</span> */}
+            {/*         {index > 0 && ( */}
+            {/*           <span */}
+            {/*             className={`text-xs ${ */}
+            {/*               entry.rating > player.ratingHistory[index - 1].rating */}
+            {/*                 ? "text-green-600" */}
+            {/*                 : entry.rating < */}
+            {/*                     player.ratingHistory[index - 1].rating */}
+            {/*                   ? "text-red-600" */}
+            {/*                   : "text-gray-600" */}
+            {/*             }`} */}
+            {/*           > */}
+            {/*             {entry.rating > */}
+            {/*               player.ratingHistory[index - 1].rating && "+"} */}
+            {/*             {entry.rating - player.ratingHistory[index - 1].rating} */}
+            {/*           </span> */}
+            {/*         )} */}
+            {/*       </div> */}
+            {/*     </div> */}
+            {/*   ))} */}
+            {/* </div> */}
           </div>
         </CardContent>
       </Card>
