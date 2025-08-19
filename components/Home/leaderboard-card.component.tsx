@@ -31,17 +31,17 @@ export default function LeaderboardCard({
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-muted">
+            <div className="flex items-center justify-center md:w-12 md:h-12 w-8 h-8 rounded-full bg-muted">
               {getRankIcon(index)}
             </div>
             <div>
               <button
                 onClick={() => handlePlayerClick(player.id)}
-                className="text-lg font-semibold hover:text-blue-600 transition-colors text-left"
+                className="md:text-lg font-semibold hover:text-blue-600 transition-colors text-left"
               >
                 {player.name}
               </button>
-              <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+              <div className="flex items-center space-x-2 text-xs md:text-sm text-muted-foreground">
                 <span>{player.rollNumber}</span>
               </div>
             </div>
@@ -55,19 +55,19 @@ export default function LeaderboardCard({
               <p className="text-xs text-muted-foreground mt-1">Rating</p>
             </div>
 
-            <div className="text-center">
+            <div className="text-center max-md:hidden">
               <p className="text-lg font-semibold">{player.stats.totalGames}</p>
               <p className="text-xs text-muted-foreground">Games</p>
             </div>
 
             <div className="text-center">
               <p className="text-lg font-semibold text-green-600">
-                {player.stats.winRate * 100}%
+                {player.stats.winRate * 100 || 0}%
               </p>
               <p className="text-xs text-muted-foreground">Win Rate</p>
             </div>
 
-            <div className="text-center">
+            <div className="text-center max-md:hidden">
               <p className="text-sm">
                 <span className="text-green-600 font-medium">
                   {player.stats.wins}W
@@ -84,7 +84,7 @@ export default function LeaderboardCard({
               <p className="text-xs text-muted-foreground">Record</p>
             </div>
 
-            <div className="text-center">
+            <div className="text-center max-md:hidden">
               <p className="text-sm">
                 {new Date(player.lastActive).toLocaleDateString()}
               </p>
