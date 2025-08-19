@@ -97,10 +97,10 @@ export default function ChessLeaderboard({
         <div className="mb-8">
           <div className="flex items-center justify-center">
             <div>
-              <h1 className="text-4xl font-bold mb-2">
+              <h1 className="text-2xl md:text-4xl font-bold md:mb-2">
                 NITH Chess Leaderboard
               </h1>
-              <p className="text-muted-foreground text-center">
+              <p className="text-muted-foreground text-center max-md:text-sm">
                 Ranked best chess players from NITH.
               </p>
             </div>
@@ -110,8 +110,8 @@ export default function ChessLeaderboard({
         {/* Filters and Search */}
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Filter className="w-5 h-5" />
+            <CardTitle className="flex items-center gap-2 max-md:text-sm">
+              <Filter className="md:w-5 md:h-5 w-4 h-4" />
               Filters & Search
             </CardTitle>
           </CardHeader>
@@ -126,7 +126,7 @@ export default function ChessLeaderboard({
                     placeholder="Search by name..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 max-md:text-sm"
                   />
                 </div>
               </div>
@@ -198,6 +198,7 @@ export default function ChessLeaderboard({
                   placeholder="e.g., 1500"
                   value={minRating}
                   onChange={(e) => setMinRating(e.target.value)}
+                  className="max-md:text-sm"
                 />
               </div>
               <div className="space-y-2">
@@ -208,6 +209,7 @@ export default function ChessLeaderboard({
                   placeholder="e.g., 2200"
                   value={maxRating}
                   onChange={(e) => setMaxRating(e.target.value)}
+                  className="max-md:text-sm"
                 />
               </div>
             </div>
